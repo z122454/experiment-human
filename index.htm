@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>人才评估实验 - 招聘顾问模拟（人类主管）</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 750px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+            padding: 35px 40px 45px;
+        }
+        h1 {
+            font-size: 22px;
+            color: #1a2634;
+            border-bottom: 3px solid #4A6CF7;
+            padding-bottom: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h1 small { font-size: 14px; font-weight: 400; color: #6b7a8a; margin-left: auto; }
+        .step-badge {
+            display: inline-block;
+            background: #4A6CF7;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            border-left: 4px solid #4A6CF7;
+            line-height: 1.7;
+        }
+        .card-compact { padding: 14px 18px; margin-bottom: 14px; }
+        .job-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .job-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .salary-tag {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 16px;
+        }
+        .job-section { margin: 12px 0 8px; font-size: 14px; line-height: 1.7; }
+        .job-section strong { color: #0f172a; display: block; margin-bottom: 4px; }
+        .job-section ul { margin-left: 18px; color: #334155; }
+        .candidate-grid { display: flex; flex-direction: column; gap: 16px; margin: 14px 0; }
+        .candidate-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 18px 20px;
+            transition: all 0.2s ease;
+            border-left: 5px solid #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .candidate-card:hover {
+            border-left-color: #4A6CF7;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            transform: translateY(-1px);
+        }
+        .candidate-card .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .candidate-name { font-size: 16px; font-weight: 700; color: #1e293b; }
+        .exp-tag {
+            background: #eef2ff;
+            color: #4A6CF7;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 12px;
+        }
+        .salary-expect {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 12px;
+            margin-left: auto;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .candidate-card .detail {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.7;
+            border-top: 1px solid #e9eef2;
+            padding-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .candidate-card .detail .info-line { display: flex; align-items: baseline; gap: 8px; }
+        .candidate-card .detail .info-label {
+            font-weight: 600;
+            color: #1e293b;
+            min-width: 55px;
+            font-size: 13px;
+        }
+        .sort-section { background: #f8fafc; border-radius: 10px; padding: 16px 20px; margin: 16px 0 10px; }
+        .sort-options { display: flex; gap: 24px; flex-wrap: wrap; margin: 8px 0 0; }
+        .sort-options label { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500; }
+        .sort-options select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            background: #fff;
+            min-width: 60px;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #d1d9e6;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 70px;
+            transition: 0.2s;
+            margin-top: 8px;
+        }
+        textarea:focus { outline: none; border-color: #4A6CF7; box-shadow: 0 0 0 3px rgba(74,108,247,0.15); }
+        .btn {
+            display: inline-block;
+            padding: 12px 36px;
+            background: #4A6CF7;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+        }
+        .btn:hover { background: #3a56c7; transform: translateY(-1px); }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        .btn-outline {
+            background: transparent;
+            color: #4A6CF7;
+            border: 1px solid #4A6CF7;
+            padding: 10px 28px;
+        }
+        .btn-outline:hover { background: #eef2ff; transform: translateY(-1px); }
+        .hidden { display: none !important; }
+        .progress-box { text-align: center; padding: 30px 20px 26px; }
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 12px 0 8px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4A6CF7, #818cf8);
+            border-radius: 20px;
+            transition: width 0.25s linear;
+        }
+        .feedback-box {
+            background: #eef2ff;
+            border-radius: 10px;
+            padding: 18px 22px;
+            border-left: 5px solid #4A6CF7;
+            margin: 16px 0 10px;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .feedback-box .label { font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block; }
+        .score-big { font-size: 48px; font-weight: 700; color: #4A6CF7; text-align: center; margin: 6px 0 2px; }
+        .score-big small { font-size: 20px; font-weight: 400; color: #64748b; }
+        .divider { border: none; border-top: 2px dashed #dce2ec; margin: 28px 0 22px; }
+        .radio-group { display: flex; gap: 30px; flex-wrap: wrap; padding: 8px 0 4px; }
+        .radio-group label { display: flex; align-items: center; gap: 8px; font-size: 15px; cursor: pointer; }
+        .text-muted { color: #64748b; font-size: 14px; }
+        .error-msg {
+            background: #fef2f2; border: 1px solid #fca5a5;
+            border-radius: 8px; padding: 12px 16px; color: #991b1b; margin-top: 12px;
+        }
+        .inline-highlight { background: #fef3c7; padding: 2px 6px; font-weight: 600; border-radius: 4px; }
+        .small-link { font-size: 13px; color: #4A6CF7; text-decoration: underline; cursor: pointer; }
+        @media (max-width: 600px) {
+            .container { padding: 20px 16px; }
+            .sort-options { flex-direction: column; gap: 10px; }
+            .radio-group { flex-direction: column; gap: 8px; }
+            .score-big { font-size: 36px; }
+            .btn { padding: 10px 24px; font-size: 15px; }
+            .candidate-card .header { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .salary-expect { margin-left: 0; }
+            .candidate-card .detail .info-line { flex-direction: column; gap: 2px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧑‍💼 人才评估实验 <small>招聘顾问模拟</small></h1>
+
+    <!-- 步骤1：情境导入（仅人类主管） -->
+    <div id="stepIntro">
+        <div class="step-badge">📌 情境导入</div>
+        <div class="card" id="introText">
+            <p style="font-size:15px; line-height:1.8;">欢迎参加本次职场决策模拟研究。</p>
+            <p style="font-size:15px; line-height:1.8; margin-top:8px;">您将扮演一家咨询公司的<strong>招聘顾问</strong>。您的直属上级是<strong>张薇（Vivian Zhang）—— 资深人力资源总监</strong>，拥有12年人才评估经验。</p>
+            <p style="font-size:15px; line-height:1.8; margin-top:8px;">她已为您<strong>分配了候选人档案，明确了评估重点与标准</strong>。在接下来的任务中，她将全程跟踪评估进度，基于专业标准对您的<strong>筛选准确率与判断质量进行综合评价</strong>，并在任务结束后<strong>提供个性化文字绩效反馈</strong>。</p>
+            <p style="font-size:15px; line-height:1.8; margin-top:8px;">请认真阅读各项材料，完成此次工作。</p>
+        </div>
+        <button class="btn" onclick="next('stepJob')" style="width:100%;">✅ 开始评估</button>
+    </div>
+
+    <!-- 步骤2：岗位要求 -->
+    <div id="stepJob" class="hidden">
+        <div class="step-badge">📋 岗位要求</div>
+        <div class="job-card">
+            <div class="job-title">项目经理 <span class="salary-tag">💰 15K-25K</span></div>
+            <div class="job-section">
+                <strong>📌 职位描述</strong>
+                <ul>
+                    <li>负责项目全生命周期管理，制定计划、分配资源、监控进度与预算</li>
+                    <li>跨部门沟通协调，推动技术、产品、运营等多团队高效协作</li>
+                    <li>识别项目风险，制定应对方案，确保项目按时交付</li>
+                    <li>定期向管理层与客户汇报，协调并管理各方期望</li>
+                </ul>
+            </div>
+            <div class="job-section">
+                <strong>📎 任职要求</strong>
+                <ul>
+                    <li>本科及以上学历，3年以上项目管理经验</li>
+                    <li>优秀的沟通、谈判与冲突解决能力</li>
+                    <li>具备较强的抗压能力，能同时管理多个并行项目</li>
+                    <li>持有PMP或同等认证者优先考虑</li>
+                </ul>
+            </div>
+            <p class="text-muted" style="margin-top: 10px;">* 请仔细阅读上述要求，后续评估将以此为基础</p>
+        </div>
+        <button class="btn" onclick="next('stepSort')" style="width:100%;">📖 我已阅读，开始筛选候选人</button>
+    </div>
+
+    <!-- 步骤3：候选人排序 -->
+    <div id="stepSort" class="hidden">
+        <div class="step-badge">📝 候选人排序</div>
+        <div class="card card-compact" style="border-left-color: #f59e0b; background: #fffbeb;">
+            <p style="font-weight: 700; margin-bottom: 4px;">📋 岗位核心要求</p>
+            <p style="font-size: 14px;">沟通协调 · 抗压能力 · 多项目并行管理</p>
+        </div>
+        <p style="font-weight: 700; margin: 12px 0 8px;">👥 候选人档案</p>
+        <div class="candidate-grid">
+            <div class="candidate-card">
+                <div class="header">
+                    <span class="candidate-name">候选人 A</span>
+                    <span class="exp-tag">5年经验</span>
+                    <span class="salary-expect">💼 期望 30K-35K</span>
+                </div>
+                <div class="detail">
+                    <div class="info-line"><span class="info-label">项目经历</span>主导3个中型项目，均提前交付，客户满意度优秀</div>
+                    <div class="info-line"><span class="info-label">擅长领域</span>建立项目管理流程规范，注重执行细节与结果达成</div>
+                    <div class="info-line"><span class="info-label">简历特点</span>未提供跨部门沟通或冲突处理的具体案例</div>
+                </div>
+            </div>
+            <div class="candidate-card">
+                <div class="header">
+                    <span class="candidate-name">候选人 B</span>
+                    <span class="exp-tag">3年经验</span>
+                    <span class="salary-expect">💼 期望 20K-25K</span>
+                </div>
+                <div class="detail">
+                    <div class="info-line"><span class="info-label">项目经历</span>参与5个跨部门项目，协调多团队资源，推动达成关键共识</div>
+                    <div class="info-line"><span class="info-label">独立负责</span>完整负责过1个项目并顺利交付</div>
+                    <div class="info-line"><span class="info-label">角色特征</span>大部分经历为协作型角色，善于沟通协调</div>
+                </div>
+            </div>
+            <div class="candidate-card">
+                <div class="header">
+                    <span class="candidate-name">候选人 C</span>
+                    <span class="exp-tag">2年经验</span>
+                    <span class="salary-expect">💼 期望 15K-20K</span>
+                </div>
+                <div class="detail">
+                    <div class="info-line"><span class="info-label">教育背景</span>名校MBA，持有PMP证书</div>
+                    <div class="info-line"><span class="info-label">工作经历</span>入职6个月从项目助理晋升为项目专员</div>
+                    <div class="info-line"><span class="info-label">项目经验</span>在校期间完成多次模拟项目，无独立带项目经历</div>
+                </div>
+            </div>
+        </div>
+        <div class="sort-section">
+            <p style="font-weight: 700; margin-bottom: 8px;">请按推荐程度排序（1 = 最推荐）</p>
+            <div class="sort-options">
+                <label>候选人 A <select id="rankA"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+                <label>候选人 B <select id="rankB"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+                <label>候选人 C <select id="rankC"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+            </div>
+        </div>
+        <p style="font-weight: 700; margin: 12px 0 4px;">📝 理由说明</p>
+        <textarea id="reasonInput" placeholder="请用1-2句话简要说明，为什么将第一名排在首位（不少于15字）"></textarea>
+        <button id="submitRankingBtn" class="btn" onclick="submitRanking()" style="width:100%; margin-top: 14px;">📤 提交排序，等待张薇总监审阅</button>
+    </div>
+
+    <!-- 步骤4：等待初步反馈 -->
+    <div id="stepWait1" class="hidden">
+        <div class="step-badge" id="waitBadge1">⏳ 张薇总监审阅中</div>
+        <div class="progress-box">
+            <p id="waitMsg1" style="font-size: 16px; font-weight: 500;">🧠 张薇总监正在依据专业经验分析您的评估逻辑，请稍候...</p>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill1"></div></div>
+            <p class="text-muted" id="progressText1">0%</p>
+        </div>
+        <div id="feedbackContainer" class="hidden">
+            <div class="feedback-box">
+                <span class="label" id="feedbackLabel">📌 张薇总监的初步反馈</span>
+                <div id="feedbackContent" style="margin-top: 8px; white-space: pre-wrap;"></div>
+            </div>
+            <div id="errorMsg" class="error-msg hidden">⚠️ 反馈获取失败，请重试或直接继续。</div>
+            <button class="btn" onclick="next('stepModify')" style="width:100%; margin-top: 12px;">继续 → 决定是否修改</button>
+            <button id="retryBtn" class="btn btn-outline hidden" onclick="retryFeedback()" style="width:100%; margin-top: 8px;">🔄 重新获取反馈</button>
+        </div>
+    </div>
+
+    <!-- 步骤5：二次微调 -->
+    <div id="stepModify" class="hidden">
+        <div class="step-badge">✏️ 二次微调</div>
+        <p id="modifyPrompt" style="font-size: 15px; margin-bottom: 12px;">您是否希望根据<strong>张薇总监的反馈</strong>修改排序？</p>
+        <div class="radio-group">
+            <label><input type="radio" name="modifyChoice" value="yes" checked /> ✅ 是，我想修改</label>
+            <label><input type="radio" name="modifyChoice" value="no" /> ❌ 否，我坚持原排序</label>
+        </div>
+        <div id="resortArea">
+            <p style="font-weight: 600; margin-bottom: 8px;">请重新排序：</p>
+            <div class="sort-options">
+                <label>A <select id="rankA2"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+                <label>B <select id="rankB2"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+                <label>C <select id="rankC2"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+            </div>
+        </div>
+        <button class="btn" onclick="submitFinal()" style="width:100%; margin-top: 14px;">📤 提交最终评估</button>
+    </div>
+
+    <!-- 步骤6：最终评估报告 -->
+    <div id="stepFinal" class="hidden">
+        <div class="step-badge" id="finalBadge">📊 张薇总监评估报告</div>
+        <div class="progress-box">
+            <p id="waitMsg2" style="font-size: 16px; font-weight: 500;">📄 张薇总监正在撰写最终绩效评语，请稍候...</p>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill2"></div></div>
+            <p class="text-muted" id="progressText2">0%</p>
+        </div>
+        <div id="finalResultPanel" class="hidden">
+            <div class="feedback-box" style="text-align: center;">
+                <span class="label" id="finalLabel">🏆 本次任务绩效评估（评估人：张薇总监）</span>
+                <div class="score-big">78 <small>/ 100</small></div>
+                <p id="finalComment" style="font-size: 16px; margin-top: 8px; color: #1e293b;"></p>
+            </div>
+            <hr class="divider" />
+            <p class="text-center" style="font-size: 15px; margin-bottom: 16px;">
+                🎉 任务已完成，感谢您的参与！<br />
+                <span class="text-muted" id="nextHint">倒计时结束后，请点击下方按钮继续问卷。</span>
+            </p>
+            <button id="goNextBtn" class="btn" onclick="goToNextPage()" style="width:100%;" disabled>⏳ 请等待倒计时...</button>
+            <p class="text-center" style="margin-top: 10px;">
+                <span class="small-link" onclick="downloadData()">🔽 下载本次实验数据</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 固定主管：人类张薇
+    const managerName = '张薇总监';
+    const API_KEY = 'sk-otvjrvvzmolpiqgvumbovanqkcpytwttllaprducxkotzkde';
+    const API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
+    const MODEL = 'deepseek-ai/DeepSeek-V3';
+    const MAX_CHARS = 80;
+
+    let firstRanking = {}, firstReason = '', feedbackText = '', finalRanking = {};
+    let countdownSeconds = 10;
+    let countdownInterval = null;
+
+    function origNext(id) {
+        document.querySelectorAll('[id^="step"]').forEach(el => el.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (id === 'stepWait1') document.getElementById('waitBadge1').innerText = `⏳ ${managerName}审阅中`;
+        if (id === 'stepFinal') {
+            document.getElementById('finalBadge').innerText = `📊 ${managerName}评估报告`;
+            startCountdown();
+        }
+    }
+
+    function next(id) {
+        if (id === 'stepModify') {
+            origNext('stepModify');
+            document.getElementById('modifyPrompt').innerHTML = `您是否希望根据<strong>${managerName}的反馈</strong>修改排序？`;
+            document.getElementById('rankA2').value = firstRanking.A;
+            document.getElementById('rankB2').value = firstRanking.B;
+            document.getElementById('rankC2').value = firstRanking.C;
+            document.querySelector('input[name="modifyChoice"][value="yes"]').checked = true;
+            document.getElementById('resortArea').style.display = 'block';
+            document.querySelectorAll('input[name="modifyChoice"]').forEach(r => {
+                r.onchange = () => { document.getElementById('resortArea').style.display = r.value === 'yes' ? 'block' : 'none'; };
+            });
+        } else {
+            origNext(id);
+        }
+    }
+
+    function submitRanking() {
+        const a = document.getElementById('rankA').value;
+        const b = document.getElementById('rankB').value;
+        const c = document.getElementById('rankC').value;
+        const reason = document.getElementById('reasonInput').value.trim();
+        if (!a || !b || !c || new Set([a,b,c]).size !== 3) { alert('请为三位候选人分配不重复的1、2、3'); return; }
+        if (reason.length < 15) { alert('理由至少15个字符'); return; }
+        firstRanking = { A:a, B:b, C:c };
+        firstReason = reason;
+        origNext('stepWait1');
+        document.getElementById('feedbackContainer').classList.add('hidden');
+        document.getElementById('errorMsg').classList.add('hidden');
+        document.getElementById('retryBtn').classList.add('hidden');
+        document.getElementById('waitMsg1').innerHTML = `🧠 <strong>${managerName}</strong>正在依据专业经验分析您的评估逻辑，请稍候...`;
+        const progressPromise = startProgress('progressFill1', 'progressText1', 20);
+        fetchFeedback(firstRanking, firstReason)
+            .then(text => {
+                progressPromise.then(() => {
+                    feedbackText = smartTruncate(text, MAX_CHARS);
+                    document.getElementById('feedbackContent').innerText = feedbackText;
+                    document.getElementById('feedbackLabel').innerHTML = `📌 <strong>${managerName}</strong>的初步反馈`;
+                    document.getElementById('feedbackContainer').classList.remove('hidden');
+                });
+            })
+            .catch(() => {
+                progressPromise.then(() => {
+                    document.getElementById('errorMsg').classList.remove('hidden');
+                    document.getElementById('retryBtn').classList.remove('hidden');
+                    document.getElementById('feedbackContainer').classList.remove('hidden');
+                });
+            });
+    }
+
+    function fetchFeedback(ranking, reason) {
+        const sysPrompt = `你是专业的招聘评估专家。请给出书面初步反馈，必须分点罗列（使用1. 2. 3. 4.），包含：1.肯定优点 2.指出忽略的维度 3.改进建议 4.评分（如42/50）。回复严格控制在80个中文字以内，客观专业。`;
+        const prompt = `岗位：沟通、抗压、多任务。排序 A:${ranking.A} B:${ranking.B} C:${ranking.C}。理由：${reason}。请生成分点反馈。`;
+        return fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+API_KEY },
+            body: JSON.stringify({ model: MODEL, messages: [{ role:'system', content: sysPrompt }, { role:'user', content: prompt }], temperature:0.7, max_tokens:300 })
+        }).then(r => { if(!r.ok) throw new Error('API error'); return r.json(); }).then(d => d.choices[0].message.content);
+    }
+
+    function retryFeedback() {
+        document.getElementById('errorMsg').classList.add('hidden');
+        document.getElementById('retryBtn').classList.add('hidden');
+        fetchFeedback(firstRanking, firstReason).then(text => {
+            feedbackText = smartTruncate(text, MAX_CHARS);
+            document.getElementById('feedbackContent').innerText = feedbackText;
+        }).catch(() => {
+            document.getElementById('errorMsg').classList.remove('hidden');
+            document.getElementById('retryBtn').classList.remove('hidden');
+        });
+    }
+
+    function startProgress(fillId, textId, sec) {
+        return new Promise(resolve => {
+            const fill = document.getElementById(fillId);
+            const text = document.getElementById(textId);
+            const total = sec * 1000, start = Date.now();
+            function step() {
+                const pct = Math.min(100, (Date.now() - start) / total * 100);
+                fill.style.width = pct + '%';
+                text.innerText = Math.round(pct) + '%';
+                if (pct < 100) requestAnimationFrame(step);
+                else resolve();
+            }
+            requestAnimationFrame(step);
+        });
+    }
+
+    function countChinese(str) { return (str.match(/[\u4e00-\u9fa5]/g) || []).length; }
+    function smartTruncate(text, max) {
+        if (countChinese(text) <= max) return text;
+        let out = '', cnt = 0;
+        for (let ch of text) { out += ch; if (/[\u4e00-\u9fa5]/.test(ch)) cnt++; if (cnt >= max) break; }
+        return out.replace(/[，,。、！？；：\s]*$/, '') + '……';
+    }
+
+    function submitFinal() {
+        const choice = document.querySelector('input[name="modifyChoice"]:checked').value;
+        if (choice === 'yes') {
+            const a = document.getElementById('rankA2').value;
+            const b = document.getElementById('rankB2').value;
+            const c = document.getElementById('rankC2').value;
+            if (new Set([a,b,c]).size !== 3) { alert('排序不能重复'); return; }
+            finalRanking = { A:a, B:b, C:c };
+        } else { finalRanking = { ...firstRanking }; }
+        origNext('stepFinal');
+        document.getElementById('finalResultPanel').classList.add('hidden');
+        document.getElementById('waitMsg2').innerHTML = `📄 <strong>${managerName}</strong>正在撰写最终绩效评语，请稍候...`;
+        document.getElementById('finalLabel').innerHTML = `🏆 本次任务绩效评估（评估人：<strong>${managerName}</strong>）`;
+        document.getElementById('finalComment').innerText = '“您已展现出合格的招聘基本素养，能够依据岗位要求进行候选人筛选。但在多维度权衡和判断稳定性上仍有提升空间，建议后续加强复杂情境下的决策训练。”';
+        startProgress('progressFill2', 'progressText2', 20).then(() => {
+            document.getElementById('finalResultPanel').classList.remove('hidden');
+        });
+    }
+
+    function startCountdown() {
+        const btn = document.getElementById('goNextBtn');
+        const hint = document.getElementById('nextHint');
+        let remaining = countdownSeconds;
+        btn.disabled = true;
+        btn.innerText = `⏳ 请等待 ${remaining} 秒...`;
+        hint.innerText = '倒计时结束后，请点击下方按钮继续问卷。';
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(countdownInterval);
+                btn.disabled = false;
+                btn.innerText = '📤 继续问卷（下一页）';
+                hint.innerText = '现在可以点击下方按钮继续问卷。';
+            } else {
+                btn.innerText = `⏳ 请等待 ${remaining} 秒...`;
+            }
+        }, 1000);
+    }
+
+    function goToNextPage() {
+        try {
+            if (window.parent && window.parent.Credamo && typeof window.parent.Credamo.nextPage === 'function') {
+                window.parent.Credamo.nextPage();
+                return;
+            }
+        } catch (e) {}
+        alert('请点击问卷下方的“下一页”按钮继续。');
+    }
+
+    function downloadData() {
+        const record = {
+            timestamp: new Date().toISOString(),
+            manager: managerName,
+            firstRanking, firstReason,
+            feedback: feedbackText,
+            finalRanking,
+            finalScore: 78
+        };
+        const blob = new Blob([JSON.stringify(record, null, 2)], {type:'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `experiment_human_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+</script>
+</body>
+</html>
